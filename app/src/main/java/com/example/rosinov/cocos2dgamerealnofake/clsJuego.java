@@ -8,6 +8,7 @@ import org.cocos2d.nodes.Sprite;
 import org.cocos2d.opengl.CCGLSurfaceView;
 import org.cocos2d.types.CCSize;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,12 +17,20 @@ public class clsJuego {
     CCSize TamañoPantalla;
     Avion avion;
     AvionEnemigo avenemigo;
+    Disparo disparo;
     Sprite fondo;
+
+    ArrayList<AvionEnemigo> arrEnemigos;
 
     public clsJuego(CCGLSurfaceView vp){
         VistaDelJuego = vp;
         avion = new Avion();
+        arrEnemigos = new ArrayList<>();
         avenemigo = new AvionEnemigo();
+        disparo = new Disparo();
+        arrEnemigos.add(avenemigo);
+
+        int vida = 3;
     }
 
     public void ComenzarJuego(){
@@ -62,9 +71,14 @@ public class clsJuego {
             TimerTask TareaPonerEnemigos = new TimerTask() {
                 @Override
                 public void run() {
+                    //Preguntar por pantalla tocada
+                    disparo = new Disparo();
+                    disparo.setPosicionInicial(Math.round(avion.getPosicionInicial().x), Math.round(avion.getPosicionInicial().y));
                     avenemigo = new AvionEnemigo();
                     avenemigo.setPosicionInicial(Math.round(TamañoPantalla.width), Math.round(TamañoPantalla.height));
                     avenemigo.moverse();
+                    arrEnemigos.add(avenemigo);
+                    DetectarColision();
                     addChild(avenemigo.getAvionenemigo());
                 }
             };
@@ -73,6 +87,15 @@ public class clsJuego {
             RelojEnemigos.schedule(TareaPonerEnemigos, 0, 1000);
 
             super.addChild(avion.getAvion());
+        }
+    }
+
+    void DetectarColision(){
+        for(int i = 0; i <= arrEnemigos.size(); i++){
+            AvionEnemigo aven = arrEnemigos.get(i);
+            if(Colision(aven.getAvionenemigo(), disparo.getDisparo())){
+                arrEnemigos.remove(i);
+            }
         }
     }
 
@@ -112,6 +135,30 @@ public class clsJuego {
                 EstaEntre(Sprite1Ab, Sprite2Ab, Sprite2Ar)){
             Devolver = true;
         }
+
+        //asasdasdasd
+
+        if(EstaEntre(Sprite2I, Sprite1I, Sprite1D) &&
+                EstaEntre(Sprite2Ab, Sprite1Ab, Sprite1Ar)){
+            Devolver = true;
+        }
+
+        if(EstaEntre(Sprite2I, Sprite1I, Sprite1D) &&
+                EstaEntre(Sprite2Ar, Sprite1Ab, Sprite1Ar)){
+            Devolver = true;
+        }
+
+        if(EstaEntre(Sprite2D, Sprite1I, Sprite1D) &&
+                EstaEntre(Sprite2Ar, Sprite1Ab, Sprite1Ar)){
+            Devolver = true;
+        }
+
+        if(EstaEntre(Sprite2D, Sprite1I, Sprite1D) &&
+                EstaEntre(Sprite2Ab, Sprite1Ab, Sprite1Ar)){
+            Devolver = true;
+        }
+
+        return Devolver;
     }
 
     boolean EstaEntre(int NumeroAComparar, int Menor, int Mayor){
