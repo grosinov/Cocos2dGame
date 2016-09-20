@@ -11,6 +11,7 @@ public class Avion {
 
     public Avion() {
         avion = Sprite.sprite("avion.png");
+        PosicionInicial = new CCPoint();
         PosicionInicial.x = 0 + avion.getWidth() / 4;
         PosicionInicial.y = 0 + avion.getHeight() / 2;
         avion.setPosition(PosicionInicial.x, PosicionInicial.y);

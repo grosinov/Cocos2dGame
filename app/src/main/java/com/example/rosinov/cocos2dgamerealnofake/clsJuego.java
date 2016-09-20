@@ -1,5 +1,7 @@
 package com.example.rosinov.cocos2dgamerealnofake;
 
+import android.util.Log;
+
 import org.cocos2d.actions.interval.ScaleBy;
 import org.cocos2d.layers.Layer;
 import org.cocos2d.nodes.Director;
@@ -19,18 +21,18 @@ public class clsJuego {
     AvionEnemigo avenemigo;
     Disparo disparo;
     Sprite fondo;
+    int vida;
 
     ArrayList<AvionEnemigo> arrEnemigos;
 
     public clsJuego(CCGLSurfaceView vp){
         VistaDelJuego = vp;
         avion = new Avion();
-        arrEnemigos = new ArrayList<>();
-        avenemigo = new AvionEnemigo();
         disparo = new Disparo();
-        arrEnemigos.add(avenemigo);
+        arrEnemigos = new ArrayList<>();
+        arrEnemigos.add(new AvionEnemigo(1, 1));
 
-        int vida = 3;
+        vida = 3;
     }
 
     public void ComenzarJuego(){
@@ -74,12 +76,18 @@ public class clsJuego {
                     //Preguntar por pantalla tocada
                     disparo = new Disparo();
                     disparo.setPosicionInicial(Math.round(avion.getPosicionInicial().x), Math.round(avion.getPosicionInicial().y));
-                    avenemigo = new AvionEnemigo();
-                    avenemigo.setPosicionInicial(Math.round(TamañoPantalla.width), Math.round(TamañoPantalla.height));
-                    avenemigo.moverse();
-                    arrEnemigos.add(avenemigo);
+                    arrEnemigos.add(new AvionEnemigo(Math.round(TamañoPantalla.width), Math.round(TamañoPantalla.height)));
+                    Log.d("enemigos", String.valueOf(arrEnemigos.size()));
+                    for(int i = 0; i < arrEnemigos.size(); i++){
+                        AvionEnemigo aven = arrEnemigos.get(i);
+                        addChild(aven.getAvionenemigo());
+                        if(aven.getAvionenemigo().getPositionX() == 0){
+                            arrEnemigos.remove(i);
+                            vida--;
+                        }
+                    }
                     DetectarColision();
-                    addChild(avenemigo.getAvionenemigo());
+
                 }
             };
 
@@ -91,7 +99,7 @@ public class clsJuego {
     }
 
     void DetectarColision(){
-        for(int i = 0; i <= arrEnemigos.size(); i++){
+        for(int i = 0; i <= arrEnemigos.size()-1; i++){
             AvionEnemigo aven = arrEnemigos.get(i);
             if(Colision(aven.getAvionenemigo(), disparo.getDisparo())){
                 arrEnemigos.remove(i);

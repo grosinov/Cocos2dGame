@@ -12,9 +12,13 @@ public class Disparo {
     CCPoint PosicionFinal;
 
     public Disparo() {
-        disparo = Sprite.sprite("AvionEnemigo.png");
+        disparo = Sprite.sprite("Disparo.png");
         PosicionInicial = new CCPoint();
         PosicionFinal = new CCPoint();
+
+        PosicionFinal.y = PosicionInicial.y;
+        PosicionFinal.x=0;
+        disparo.runAction(MoveTo.action(3, PosicionFinal.x, PosicionFinal.y));
     }
 
     public Sprite getDisparo() {
@@ -26,11 +30,5 @@ public class Disparo {
         PosicionInicial.y = y;
 
         disparo.setPosition(PosicionInicial.x, PosicionInicial.y);
-    }
-
-    public void moverse(){
-        PosicionFinal.y = PosicionInicial.y;
-        PosicionFinal.x=0;
-        disparo.runAction(MoveTo.action(3, PosicionFinal.x, PosicionFinal.y));
     }
 }
